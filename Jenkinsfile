@@ -21,6 +21,20 @@ pipeline {
                 '''
             }
         }
+        stage('Lint') {
+            agent{
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    npm install eslint
+                    npx eslint . --ext .js,.jsx,.ts,.tsx
+                '''
+            }
+        }
         stage('Run Tests Parallel'){
             parallel{
                 stage('Unit Test'){
