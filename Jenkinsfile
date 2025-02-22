@@ -109,6 +109,27 @@ pipeline {
                 '''
             }
         }
+        stage('E2E-Production'){
+                    agent{
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                        }
+                    }
+                    environment{
+                            CI_ENVIRONMENT_URL= 'https://jovial-tarsier-6ec8f8.netlify.app'
+                    }
+                    steps {
+                        sh'''
+                            npx playwright test --reporter=html
+                        '''
+                    }
+                    post {
+                        always {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Prod E2E', reportTitles: 'Playwright E2E Prod test', useWrapperFileDirectly: true])
+                        }
+                    }
+        }
     }
     
 }
