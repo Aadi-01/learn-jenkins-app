@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         NETLIFY_SITE_ID = '5c65ad5c-4ac4-4950-b5e8-aef241157208'
-        NETLIFY_AUTH_TOKEN=credential('netlify-token')
+        NETLIFY_AUTH_TOKEN= credentials('netlify-token')
     }
     stages {
         // this is a build stage
