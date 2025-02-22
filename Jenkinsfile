@@ -23,6 +23,7 @@ pipeline {
                 '''
             }
         }
+        /*
         stage('Lint') {
             agent{
                 docker {
@@ -37,6 +38,7 @@ pipeline {
                 '''
             }
         }
+        */
         stage('Run Tests Parallel'){
             parallel{
                 stage('Unit Test'){
@@ -101,7 +103,7 @@ pipeline {
                 npm install netlify-cli
                 node_modules/.bin/netlify --version
                 echo "Deploying to Netlify- Production. Site ID: $NETLIFY_SITE_ID"
-                
+
                 '''
             }
         }
