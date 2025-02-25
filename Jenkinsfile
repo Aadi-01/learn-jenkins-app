@@ -85,7 +85,7 @@ pipeline {
                         // junit 'reports/**/*.xml'
                         // junit 'jest-results/junit.xml'
                         // publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: 'Playwright test', useWrapperFileDirectly: true])
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Local E2E', reportTitles: 'Playwright test', useWrapperFileDirectly: true])
                         }
                     }
                 }
@@ -105,7 +105,6 @@ pipeline {
                 echo "Deploying to Staging. Site ID: $NETLIFY_SITE_ID"
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
-                
                 '''
                 script{
                 env.STAGE_ENV_URL= sh( script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout:true)
@@ -142,24 +141,7 @@ pipeline {
                     }
             }
         }
-        stage('Deploy Prod') {
-            agent{
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                npm install netlify-cli
-                node_modules/.bin/netlify --version
-                echo "Deploying to Netlify- Production. Site ID: $NETLIFY_SITE_ID"
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --prod
-                '''
-            }
-        }
-        stage('E2E-Production'){
+        stage('Deploy Production') {
                     agent{
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -171,7 +153,14 @@ pipeline {
                     }
                     steps {
                         sh'''
-                            npx playwright test --reporter=html
+                        node --veersion
+                        npm install netlify-cli
+                        node_modules/.bin/netlify --version
+                        echo "Deploying to Netlify- Production. Site ID: $NETLIFY_SITE_ID"
+                        node_modules/.bin/netlify status
+                        node_modules/.bin/netlify deploy --dir=build --prod
+                        sleep 20
+                        npx playwright test --reporter=html
                         '''
                     }
                     post {
