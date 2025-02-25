@@ -100,7 +100,7 @@ pipeline {
                     }
                     environment{
                             // CI_ENVIRONMENT_URL= 'https://jovial-tarsier-6ec8f8.netlify.app'
-                            CI_ENVIRONMENT_URL= 'STAGE_URL_TO_BE_REPLACED'
+                            CI_ENVIRONMENT_URL= 'STAGE URL TO BE REPLACED'
                     }
                     steps {
                         sh'''
