@@ -109,7 +109,9 @@ pipeline {
                 '''
             }
             script{
+                steps{
                 env.STAGE_ENV_URL= sh( script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout:true)
+                }
             }
         }
         stage('Staging E2E'){
