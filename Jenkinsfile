@@ -91,28 +91,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Staging env') {
-            agent{
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                npm install netlify-cli node-jq
-                node_modules/.bin/netlify --version
-                echo "Deploying to Staging. Site ID: $NETLIFY_SITE_ID"
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
-                '''
-                script{
-                env.STAGE_ENV_URL= sh( script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout:true)
-                }
-            }
-            
-        }
-        stage('Staging E2E'){
+        stage('Deploy Stage'){
                     agent{
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -121,11 +100,18 @@ pipeline {
                     }
                     environment{
                             // CI_ENVIRONMENT_URL= 'https://jovial-tarsier-6ec8f8.netlify.app'
-                            CI_ENVIRONMENT_URL= "${STAGE_ENV_URL}"
+                            CI_ENVIRONMENT_URL= 'TO be updated'
                     }
                     steps {
                         sh'''
-                            npx playwright test --reporter=html
+                        npm install netlify-cli node-jq
+                        node_modules/.bin/netlify --version
+                        echo "Deploying to Staging. Site ID: $NETLIFY_SITE_ID"
+                        node_modules/.bin/netlify status
+                        node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
+                        CI_ENVIRONMENT_URL= $(node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json)
+                        sleep 20
+                        npx playwright test --reporter=html
                         '''
                     }
                     post {
