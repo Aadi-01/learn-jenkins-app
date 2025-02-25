@@ -107,7 +107,9 @@ pipeline {
                 node_modules/.bin/netlify deploy --dir=build --json > deploy-output.json
                 #node_modules/.bin/node-jq -r ".deploy_url" deploy-output.json
                 '''
-                env.STAGE_ENV_URL= sh( script: 'node_modules/.bin/node-jq -r ".deploy_url" deploy-output.json', returnStdout:true)
+            }
+            script{
+                env.STAGE_ENV_URL= sh( script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json", returnStdout:true)
             }
         }
         stage('Staging E2E'){
@@ -119,7 +121,7 @@ pipeline {
                     }
                     environment{
                             // CI_ENVIRONMENT_URL= 'https://jovial-tarsier-6ec8f8.netlify.app'
-                            CI_ENVIRONMENT_URL= '${STAGE_ENV_URL}'
+                            CI_ENVIRONMENT_URL= "${STAGE_ENV_URL}"
                     }
                     steps {
                         sh'''
