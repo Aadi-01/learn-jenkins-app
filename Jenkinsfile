@@ -8,7 +8,9 @@ pipeline {
     stages {
         stage('Docker-Build'){
             steps{
-                sh docker build -t my-playwright .
+                sh '''
+                docker build -t my-playwright .
+                '''
             }
         }
         // this is a build stage
