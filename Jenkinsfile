@@ -153,7 +153,7 @@ pipeline {
                     }
                     steps {
                         sh'''
-                        node --veersion
+                        node --version
                         npm install netlify-cli
                         node_modules/.bin/netlify --version
                         echo "Deploying to Netlify- Production. Site ID: $NETLIFY_SITE_ID"
